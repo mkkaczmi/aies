@@ -11,29 +11,39 @@ class SearchMethod:
             search_strategy: String of letters representing search order (e.g., "LRUD" for Left-Right-Up-Down)
         """
         self.search_strategy = search_strategy.upper()
-        self.moves_count = 0
-        self.empty_moves_count = 0
+        self.visited_count = 0      # Number of states visited (added to visited set)
+        self.processed_count = 0    # Number of states processed (popped from queue/stack)
+        self.max_depth = 0          # Maximum recursion depth reached
     
-    def bfs(self, initial_board: Board) -> Optional[Board]:
-        """Breadth-First Search implementation"""
-        queue = deque([(initial_board, [])])
+    def bfs(self, initial_board: Board) -> Tuple[Optional[Board], List[Tuple[int, int]]]:
+        """
+        Breadth-First Search implementation
+        
+        Args:
+            initial_board: The starting board state
+            
+        Returns:
+            Tuple of (solved board state or None if no solution is found, path to solution)
+        """
+        queue = deque([(initial_board, [], 0)])  # (board, path, depth)
         visited = set([initial_board.get_state_key()])
+        self.visited_count = 1
+        self.processed_count = 0
+        self.max_depth = 0
         
         while queue:
-            current_board, path = queue.popleft()
-            self.moves_count += 1
+            current_board, path, depth = queue.popleft()
+            self.processed_count += 1
+            self.max_depth = max(self.max_depth, depth)
             
-            # Debug printing
-            if self.moves_count % 100 == 0:
-                print(f"Exploring state #{self.moves_count}")
-                print(current_board)
-                print("-" * 40)
+            # Debug printing (optional)
+            if self.processed_count % 1000 == 0:
+                print(f"Processed {self.processed_count} states, current depth: {depth}")
             
             if current_board.is_solved():
-                return current_board
+                return current_board, path
             
             possible_moves = current_board.get_possible_moves(self.search_strategy)
-            print(f"Possible moves from {current_board.empty_position}: {possible_moves}")
             
             for new_empty_pos in possible_moves:
                 new_board = current_board.make_move(new_empty_pos)
@@ -41,28 +51,44 @@ class SearchMethod:
                 
                 if new_state not in visited:
                     visited.add(new_state)
-                    queue.append((new_board, path + [new_empty_pos]))
-                    self.empty_moves_count += 1
-                    
-                    # Debug printing
-                    print(f"New state found (move empty to {new_empty_pos}):")
-                    print(new_board)
-                    print("-" * 20)
+                    self.visited_count += 1
+                    queue.append((new_board, path + [new_empty_pos], depth + 1))
         
-        return None
+        return None, []
     
-    def dfs(self, initial_board: Board, depth_limit: int = 100) -> Optional[Board]:
-        """Depth-First Search implementation with depth limit"""
-        stack = [(initial_board, 0)]
+    def dfs(self, initial_board: Board, depth_limit: int = 50000) -> Tuple[Optional[Board], List[Tuple[int, int]]]:
+        """
+        Depth-First Search implementation with depth limit
+        
+        Args:
+            initial_board: The starting board state
+            depth_limit: Maximum depth to explore (minimum 20)
+            
+        Returns:
+            Tuple of (solved board state or None if no solution is found, path to solution)
+        """
+        # Ensure minimum depth limit of 20
+        depth_limit = max(20, depth_limit)
+        
+        stack = [(initial_board, [], 0)]  # (board, path, depth)
         visited = set([initial_board.get_state_key()])
+        self.visited_count = 1
+        self.processed_count = 0
+        self.max_depth = 0
         
         while stack:
-            current_board, depth = stack.pop()
-            self.moves_count += 1
+            current_board, path, depth = stack.pop()
+            self.processed_count += 1
+            self.max_depth = max(self.max_depth, depth)
+            
+            # Debug printing (optional)
+            if self.processed_count % 1000 == 0:
+                print(f"Processed {self.processed_count} states, current depth: {depth}")
             
             if current_board.is_solved():
-                return current_board
+                return current_board, path
             
+            # If we've reached the depth limit, backtrack
             if depth >= depth_limit:
                 continue
             
@@ -74,7 +100,7 @@ class SearchMethod:
                 
                 if new_state not in visited:
                     visited.add(new_state)
-                    stack.append((new_board, depth + 1))
-                    self.empty_moves_count += 1
+                    self.visited_count += 1
+                    stack.append((new_board, path + [new_empty_pos], depth + 1))
         
-        return None
+        return None, []
