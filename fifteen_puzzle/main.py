@@ -26,7 +26,7 @@ def run_search(board: Board, search_method_name: str, search_strategy: str):
         solution, solution_path = search_method.bfs(board)
     elif search_method_name.lower() == 'dfs':
         # DFS has a minimum depth limit of 20
-        solution, solution_path = search_method.dfs(board)
+        solution, solution_path = search_method.dfs(board, depth_limit=20)
     else:
         raise ValueError(f"Unknown search method: {search_method_name}")
     

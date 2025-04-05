@@ -58,7 +58,7 @@ class SearchMethod:
     
     def dfs(self, initial_board: Board, depth_limit: int = 50000) -> Tuple[Optional[Board], List[Tuple[int, int]]]:
         """
-        Depth-First Search implementation with depth limit
+        Optimized Depth-First Search implementation with depth limit.
         
         Args:
             initial_board: The starting board state
@@ -70,7 +70,10 @@ class SearchMethod:
         # Ensure minimum depth limit of 20
         depth_limit = max(20, depth_limit)
         
+        # Initialize stack with the initial board, its path, and depth
         stack = [(initial_board, [], 0)]  # (board, path, depth)
+        
+        # Use a set for visited states for efficient look-up
         visited = set([initial_board.get_state_key()])
         self.visited_count = 1
         self.processed_count = 0
@@ -81,10 +84,11 @@ class SearchMethod:
             self.processed_count += 1
             self.max_depth = max(self.max_depth, depth)
             
-            # Debug printing (optional)
+            # Debug print for monitoring progress (optional)
             if self.processed_count % 1000 == 0:
                 print(f"Processed {self.processed_count} states, current depth: {depth}")
             
+            # Check if the current board is solved
             if current_board.is_solved():
                 return current_board, path
             
@@ -92,15 +96,21 @@ class SearchMethod:
             if depth >= depth_limit:
                 continue
             
-            # Reverse the moves to match the search strategy order when popping from stack
+            # Get possible moves (no need to reverse them manually later)
             possible_moves = current_board.get_possible_moves(self.search_strategy)
-            for new_empty_pos in reversed(possible_moves):
+            
+            # Reuse the current path and only add new valid moves
+            for new_empty_pos in possible_moves:
                 new_board = current_board.make_move(new_empty_pos)
                 new_state = new_board.get_state_key()
                 
+                # Only explore the new state if it's unvisited
                 if new_state not in visited:
                     visited.add(new_state)
                     self.visited_count += 1
+                    # Append to the stack with updated path
                     stack.append((new_board, path + [new_empty_pos], depth + 1))
         
+        # No solution found within the given depth limit
         return None, []
+

@@ -1,0 +1,1 @@
+& "C:\Program Files\zulu8.84.0.15-ca-fx-jre8.0.442-win_x64\bin\java.exe" -jar puzzlegen.jar
