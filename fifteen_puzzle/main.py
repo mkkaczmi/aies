@@ -13,8 +13,8 @@ def run_search(board: Board, search_method_name: str, search_strategy: str):
     
     Args:
         board: Initial board state
-        search_method_name: 'bfs' or 'dfs'
-        search_strategy: String of letters representing search order
+        search_method_name: 'bfs', 'dfs', or 'astr'
+        search_strategy: String of letters representing search order or 'manh'/'hamm' for A*
     
     Returns:
         Tuple of (solution board, solution path)
@@ -27,6 +27,8 @@ def run_search(board: Board, search_method_name: str, search_strategy: str):
     elif search_method_name.lower() == 'dfs':
         # DFS has a minimum depth limit of 20
         solution, solution_path = search_method.dfs(board, depth_limit=20)
+    elif search_method_name.lower() == 'astr':
+        solution, solution_path = search_method.a_star(board)
     else:
         raise ValueError(f"Unknown search method: {search_method_name}")
     
@@ -39,8 +41,8 @@ def solve_puzzle(board: Board, search_method_name: str, search_strategy: str,
     
     Args:
         board: Initial board state
-        search_method_name: 'bfs' or 'dfs'
-        search_strategy: String of letters representing search order
+        search_method_name: 'bfs', 'dfs', or 'astr'
+        search_strategy: String of letters representing search order or 'manh'/'hamm' for A*
         solution_file: Path to file where solution should be saved
         info_file: Path to file where additional information should be saved
     """
@@ -51,6 +53,11 @@ def solve_puzzle(board: Board, search_method_name: str, search_strategy: str,
     
     if search_method_name.lower() == 'dfs':
         print("Note: DFS has a minimum depth limit of 20")
+    elif search_method_name.lower() == 'astr':
+        if search_strategy.lower() == 'manh':
+            print("Using Manhattan distance heuristic")
+        elif search_strategy.lower() == 'hamm':
+            print("Using Hamming distance heuristic")
     
     print("=" * 40)
     
@@ -84,8 +91,8 @@ if __name__ == "__main__":
     # Check command line arguments
     if len(sys.argv) != 6:
         print("Usage: python main.py <search_method> <search_strategy> <input_file> <solution_file> <info_file>")
-        print("  search_method: 'bfs' or 'dfs'")
-        print("  search_strategy: e.g., 'LRUD' for Left-Right-Up-Down")
+        print("  search_method: 'bfs', 'dfs', or 'astr'")
+        print("  search_strategy: e.g., 'LRUD' for Left-Right-Up-Down, or 'manh'/'hamm' for A*")
         print("  input_file: path to file containing initial board state")
         print("  solution_file: path to file where solution will be saved")
         print("  info_file: path to file where additional information will be saved")
@@ -98,9 +105,15 @@ if __name__ == "__main__":
     info_file = sys.argv[5]
     
     # Check if search method is valid
-    if search_method.lower() not in ['bfs', 'dfs']:
+    if search_method.lower() not in ['bfs', 'dfs', 'astr']:
         print(f"Invalid search method: {search_method}")
-        print("Valid methods are 'bfs' and 'dfs'")
+        print("Valid methods are 'bfs', 'dfs', and 'astr'")
+        sys.exit(1)
+    
+    # Check if search strategy is valid for A*
+    if search_method.lower() == 'astr' and search_strategy.lower() not in ['manh', 'hamm']:
+        print(f"Invalid search strategy for A*: {search_strategy}")
+        print("Valid strategies for A* are 'manh' (Manhattan) and 'hamm' (Hamming)")
         sys.exit(1)
     
     # Read board from input file
