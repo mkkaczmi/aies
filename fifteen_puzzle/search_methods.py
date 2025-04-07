@@ -5,28 +5,12 @@ import heapq
 
 class SearchMethod:
     def __init__(self, search_strategy: str):
-        """
-        Initialize search method with a search strategy.
-        
-        Args:
-            search_strategy: String of letters representing search order (e.g., "LRUD" for Left-Right-Up-Down)
-                            or "astr manh"/"astr hamm" for A* with Manhattan/Hamming heuristics
-        """
         self.search_strategy = search_strategy.upper()
         self.visited_count = 0      # Number of states visited (added to visited set)
         self.processed_count = 0    # Number of states processed (popped from queue/stack)
         self.max_depth = 0          # Maximum recursion depth reached
     
     def bfs(self, initial_board: Board) -> Tuple[Optional[Board], List[Tuple[int, int]]]:
-        """
-        Breadth-First Search implementation
-        
-        Args:
-            initial_board: The starting board state
-            
-        Returns:
-            Tuple of (solved board state or None if no solution is found, path to solution)
-        """
         queue = deque([(initial_board, [], 0)])  # (board, path, depth)
         visited = set([initial_board.get_state_key()])
         self.visited_count = 1
@@ -59,16 +43,6 @@ class SearchMethod:
         return None, []
     
     def dfs(self, initial_board: Board, depth_limit: int = 50000) -> Tuple[Optional[Board], List[Tuple[int, int]]]:
-        """
-        Optimized Depth-First Search implementation with depth limit.
-        
-        Args:
-            initial_board: The starting board state
-            depth_limit: Maximum depth to explore (minimum 20)
-            
-        Returns:
-            Tuple of (solved board state or None if no solution is found, path to solution)
-        """
         # Ensure minimum depth limit of 20
         depth_limit = max(20, depth_limit)
         
@@ -117,15 +91,6 @@ class SearchMethod:
         return None, []
     
     def hamming_distance(self, board: Board) -> int:
-        """
-        Calculate Hamming distance heuristic - number of tiles out of place
-        
-        Args:
-            board: The current board state
-            
-        Returns:
-            Hamming distance (number of tiles out of place)
-        """
         distance = 0
         expected_value = 1
         
@@ -143,15 +108,6 @@ class SearchMethod:
         return distance
     
     def manhattan_distance(self, board: Board) -> int:
-        """
-        Calculate Manhattan distance heuristic - sum of distances of tiles from their goal positions
-        
-        Args:
-            board: The current board state
-            
-        Returns:
-            Manhattan distance (sum of distances of tiles from their goal positions)
-        """
         distance = 0
         
         for i in range(board.height):
@@ -170,15 +126,6 @@ class SearchMethod:
         return distance
     
     def a_star(self, initial_board: Board) -> Tuple[Optional[Board], List[Tuple[int, int]]]:
-        """
-        A* search implementation with Hamming or Manhattan heuristics
-        
-        Args:
-            initial_board: The starting board state
-            
-        Returns:
-            Tuple of (solved board state or None if no solution is found, path to solution)
-        """
         # Determine which heuristic to use
         if self.search_strategy.lower() == "manh":
             heuristic = self.manhattan_distance

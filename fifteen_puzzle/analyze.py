@@ -6,8 +6,6 @@ from pathlib import Path
 import numpy as np
 
 def parse_filename(filename):
-    """Parse the filename to extract components."""
-    # Remove _stats.txt and split by underscore
     parts = filename.replace('_stats.txt', '').split('_')
     return {
         'depth': int(parts[1]),
@@ -17,7 +15,6 @@ def parse_filename(filename):
     }
 
 def read_stats_file(filepath):
-    """Read and parse the stats file content."""
     with open(filepath, 'r') as f:
         lines = f.readlines()
     return {
@@ -29,7 +26,6 @@ def read_stats_file(filepath):
     }
 
 def load_dataset(directory):
-    """Load all stats files from the directory into a DataFrame."""
     data = []
     
     for file in Path(directory).glob('*_stats.txt'):
@@ -41,7 +37,6 @@ def load_dataset(directory):
     return pd.DataFrame(data)
 
 def calculate_detailed_statistics(df):
-    """Calculate detailed statistics grouped by method and strategy."""
     metrics = ['solution_length', 'visited', 'processed', 'depth_reached', 'time_ms']
     
     # Basic statistics per method and strategy
@@ -67,7 +62,6 @@ def calculate_detailed_statistics(df):
     return basic_stats, success_rate, method_stats, strategy_stats
 
 def create_boxplots(df, output_dir):
-    """Create boxplots for each metric with logarithmic scale where appropriate."""
     metrics = ['solution_length', 'visited', 'processed', 'depth_reached', 'time_ms']
     log_scale_metrics = ['visited', 'processed', 'time_ms']  # Metrics that need log scale
     
@@ -103,7 +97,6 @@ def create_boxplots(df, output_dir):
         plt.close()
 
 def create_heatmaps(stats_df, output_dir):
-    """Create heatmaps for each metric with logarithmic scale where appropriate."""
     log_scale_metrics = ['visited', 'processed', 'time_ms']
     
     # Explicitly define the exact order we want for strategies
@@ -136,9 +129,7 @@ def create_heatmaps(stats_df, output_dir):
         plt.savefig(f'{output_dir}/{metric}_heatmap.png', dpi=300, bbox_inches='tight')
         plt.close()
 
-def save_statistics_tables(basic_stats, success_rate, method_stats, strategy_stats, output_dir):
-    """Save all statistics tables to separate CSV files with formatted output."""
-    
+def save_statistics_tables(basic_stats, success_rate, method_stats, strategy_stats, output_dir):    
     # Format and save basic statistics
     for metric in basic_stats.columns.levels[0]:
         metric_stats = basic_stats[metric].round(3)

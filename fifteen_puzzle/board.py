@@ -3,16 +3,13 @@ class PuzzleElement:
         self.value = value
     
     def is_empty(self) -> bool:
-        """Check if the element is an empty space (represented by 0)"""
         return self.value == 0
     
     def __str__(self) -> str:
-        """String representation of the element"""
         return str(self.value) if not self.is_empty() else " "
 
 class Board:
     def __init__(self, elements: list[list[int]]):
-        """Initialize board from 2D array of integers"""
         self.height = len(elements)
         self.width = len(elements[0])
         
@@ -37,11 +34,9 @@ class Board:
             raise ValueError("Board must contain exactly one empty space (0)")
     
     def get_element(self, row: int, col: int) -> PuzzleElement:
-        """Get element at specified position"""
         return self.board[row][col]
     
     def __str__(self) -> str:
-        """String representation of the board"""
         result = []
         for row in self.board:
             row_str = " ".join(str(element).rjust(2) for element in row)
@@ -49,7 +44,6 @@ class Board:
         return "\n".join(result)
     
     def get_possible_moves(self, search_strategy: str = "LRUD") -> list[tuple[int, int]]:
-        """Get all possible moves for the empty space based on the search strategy"""
         empty_row, empty_col = self.empty_position
         possible_moves = []
         
@@ -72,7 +66,6 @@ class Board:
         return possible_moves
     
     def make_move(self, new_empty_pos: tuple[int, int]) -> 'Board':
-        """Create a new board with the empty space moved to the new position"""
         empty_row, empty_col = self.empty_position
         new_row, new_col = new_empty_pos
         
@@ -95,7 +88,6 @@ class Board:
         return Board(new_elements)
     
     def is_solved(self) -> bool:
-        """Check if the board is in the solved state (numbers in ascending order)"""
         expected_value = 1
         for i in range(self.height):
             for j in range(self.width):
@@ -110,5 +102,4 @@ class Board:
         return True
     
     def get_state_key(self) -> str:
-        """Get a string representation of the board for use as a dictionary key"""
         return str(self) 

@@ -8,17 +8,6 @@ from search_methods import SearchMethod
 
 @time_execution
 def run_search(board: Board, search_method_name: str, search_strategy: str):
-    """
-    Run the specified search method on the given board.
-    
-    Args:
-        board: Initial board state
-        search_method_name: 'bfs', 'dfs', or 'astr'
-        search_strategy: String of letters representing search order or 'manh'/'hamm' for A*
-    
-    Returns:
-        Tuple of (solution board, solution path)
-    """
     search_method = SearchMethod(search_strategy)
     
     # Choose search method based on input
@@ -36,16 +25,6 @@ def run_search(board: Board, search_method_name: str, search_strategy: str):
 
 def solve_puzzle(board: Board, search_method_name: str, search_strategy: str, 
                 solution_file: str, info_file: str):
-    """
-    Solve the puzzle using the specified search method and strategy
-    
-    Args:
-        board: Initial board state
-        search_method_name: 'bfs', 'dfs', or 'astr'
-        search_strategy: String of letters representing search order or 'manh'/'hamm' for A*
-        solution_file: Path to file where solution should be saved
-        info_file: Path to file where additional information should be saved
-    """
     print(f"Initial board state:")
     print(board)
     print(f"Empty position: {board.empty_position}")
