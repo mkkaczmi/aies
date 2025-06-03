@@ -177,3 +177,5 @@ cython_debug/
 *4x4*
 *.zip
 analysis_results/
+
+dataset/
